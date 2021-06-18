@@ -1,0 +1,88 @@
+version: '3'
+
+volumes:
+  postgres_data:
+      driver: local
+
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_FRONTEND_URL: http://localhost:8080/auth
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+  gatekeeper:
+    image: bitnami/keycloak-gatekeeper:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - KC_CLIENT_ID=$KC_CLIENT_ID
+      - KC_CLIENT_SECRET=$KC_CLIENT_SECRET
+      - KC_DISCOVERY_URL=$KC_DISCOVERY_URL
+      - KC_REDIRECTION_URL=$KC_REDIRECTION_URL
+      - KC_UPSTREAM_URL=$KC_UPSTREAM_URL
+      - KC_SECURE_COOKIE=$KC_SECURE_COOKIE
+    command:
+      - /keycloak-gatekeeper
+      - --client-id
+      - $KC_CLIENT_ID
+      - --client-secret
+      - $KC_CLIENT_SECRET
+      - --discovery-url
+      - $KC_DISCOVERY_URL
+      - --openid-provider-proxy
+      - $KC_PROVIDER_PROXY
+      - --listen
+      - :3000
+      - --redirection-url
+      - $KC_REDIRECTION_URL
+      - --upstream-url
+      - $KC_UPSTREAM_URL
+      - --enable-refresh-tokens=true
+      - --encryption-key=F0R5569RZALJI567
+      - --secure-cookie=$KC_SECURE_COOKIE
+      - --resources
+      - uri=/graphql/*
+      - --resources
+      - uri=/token/*
+      - --enable-logout-redirect=true
+      - --cors-origins
+      - "*"
+      - --cors-methods
+      - GET,POST,OPTIONS
+      - --cors-headers
+      - authorization,content-type
+    links:
+      - "keycloak:localhost"
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    command:
+      bash -c "python main.py"

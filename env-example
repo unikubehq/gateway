@@ -1,0 +1,10 @@
+# this example file plays reasonably well with the docu-compose docker setup
+# given the standard docker ip
+
+AUTO_RELOAD=true
+DEBUG=true
+PORT=8080
+WORKERS=1
+
+APOLLO_HOST=172.17.0.1
+APOLLO_PORT=8090
