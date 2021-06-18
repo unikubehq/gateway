@@ -27,7 +27,11 @@ class GraphQLView(OrganizationScopedView):
             url += f"?{request.query_string}"
 
         # ... and proxy request
-        r = requests.post(url, data=request.body, headers=request.headers,)
+        r = requests.post(
+            url,
+            data=request.body,
+            headers=request.headers,
+        )
         return response.raw(r.content)
 
 
@@ -81,7 +85,11 @@ class ManifestView(HTTPMethodView):
     async def get(self, request: Request, path: str) -> BaseHTTPResponse:  # noqa
         # this directly passes to manifest service
         if settings.MANIFEST_SVC_URL:
-            r = requests.get(urljoin(settings.MANIFEST_SVC_URL, path), data=request.body, headers=request.headers,)
+            r = requests.get(
+                urljoin(settings.MANIFEST_SVC_URL, path),
+                data=request.body,
+                headers=request.headers,
+            )
             return response.raw(r.content, headers=r.headers, status=r.status_code)
         else:
             return text("Backend service not available", status=500)
@@ -94,7 +102,11 @@ class UploadView(HTTPMethodView):
         service = path_split[0]
         service_path = "/".join(path_split[1:])
         try:
-            r = requests.post(f"http://{service}:{port}/{service_path}", data=request.body, headers=request.headers,)
+            r = requests.post(
+                f"http://{service}:{port}/{service_path}",
+                data=request.body,
+                headers=request.headers,
+            )
             r.raise_for_status()
         except HTTPError:
             return text("Error", status=r.status_code)

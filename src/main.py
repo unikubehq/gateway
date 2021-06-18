@@ -29,5 +29,8 @@ CORS(app)
 
 if __name__ == "__main__":
     app.run(
-        host="0.0.0.0", port=settings.PORT, auto_reload=settings.AUTO_RELOAD, workers=settings.WORKERS,
+        host="0.0.0.0",
+        port=settings.PORT,
+        auto_reload=settings.AUTO_RELOAD,
+        workers=settings.WORKERS,
     )
