@@ -95,6 +95,20 @@ class ManifestView(HTTPMethodView):
             return text("Backend service not available", status=500)
 
 
+class ProjectWebhookView(HTTPMethodView):
+    async def post(self, request: Request, path: str) -> BaseHTTPResponse:  # noqa
+        # this directly passes to manifest service
+        if settings.PROJECTS_SVC_URL:
+            r = requests.post(
+                urljoin(settings.PROJECTS_SVC_URL, path),
+                data=request.body,
+                headers=request.headers,
+            )
+            return response.raw(r.content, headers=r.headers, status=r.status_code)
+        else:
+            return text("Backend service not available", status=500)
+
+
 class UploadView(HTTPMethodView):
     async def post(self, request: Request, path: str) -> BaseHTTPResponse:
         path_split = path.split("/")

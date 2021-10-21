@@ -23,4 +23,5 @@ APOLLO_GQL_URL = f"http://{APOLLO_HOST}:{APOLLO_PORT}/"
 GQL_TIMEOUT = int(os.getenv("GQL_TIMEOUT", "5"))
 
 MANIFEST_SVC_URL = os.getenv("MANIFESTS_HTTP_PORT", "").replace("tcp://", "http://")
+PROJECTS_SVC_URL = os.getenv("PROJECTS_HTTP_PORT", "").replace("tcp://", "http://")
 ORGAS_SVC_URL = os.getenv("ORGAS_HTTP_PORT", "").replace("tcp://", "http://")
