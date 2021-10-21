@@ -6,8 +6,7 @@ from sanic.request import Request
 from sanic.response import text, BaseHTTPResponse, html
 
 import settings
-from gateway.graphql import GraphQLView, TokenDebugView, ManifestView, ProjectWebhookView,\
-    UploadView, GraphQLSchemaView
+from gateway.graphql import GraphQLView, TokenDebugView, ManifestView, ProjectWebhookView, UploadView, GraphQLSchemaView
 
 
 def prefix_url(url: str) -> str:
